@@ -171,7 +171,7 @@ function HostScreen() {
             <section>
               <div
                 ref={arenaRef}
-                className={`-mx-5 sm:-mx-10 ${isFullscreen ? "flex h-full flex-col justify-center bg-panel" : ""}`}
+                className={`-mx-5 sm:-mx-10 ${isFullscreen ? "relative flex h-full flex-col justify-center bg-panel" : ""}`}
               >
                 <TugOfWarArena ropePosition={data.ropePosition} pulse={pulse} />
                 {isFullscreen && (
