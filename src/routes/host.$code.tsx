@@ -169,7 +169,10 @@ function HostScreen() {
             </section>
           ) : (
             <section>
-              <div className="-mx-5 sm:-mx-10">
+              <div
+                ref={arenaRef}
+                className={`-mx-5 sm:-mx-10 ${isFullscreen ? "flex h-full flex-col justify-center bg-panel" : ""}`}
+              >
                 <TugOfWarArena ropePosition={data.ropePosition} pulse={pulse} />
               </div>
               <div className="mt-6 text-center">
