@@ -39,7 +39,23 @@ function HostScreen() {
   const control = useServerFn(controlRoom);
   const [pulse, setPulse] = useState<1 | 2 | null>(null);
   const [lobbyOpen, setLobbyOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const arenaRef = useRef<HTMLDivElement>(null);
   const prevPos = useRef(0);
+
+  useEffect(() => {
+    const onFs = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener("fullscreenchange", onFs);
+    return () => document.removeEventListener("fullscreenchange", onFs);
+  }, []);
+
+  const toggleFullscreen = () => {
+    if (document.fullscreenElement) {
+      void document.exitFullscreen();
+    } else if (arenaRef.current) {
+      void arenaRef.current.requestFullscreen();
+    }
+  };
 
   const q = data?.question ?? null;
   const status = data?.status;
