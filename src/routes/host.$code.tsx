@@ -201,6 +201,14 @@ function HostScreen() {
                 DEVAM ET
               </Ctrl>
             )}
+            {(data.status === "PLAYING" || data.status === "PAUSED") && (
+              <>
+                <Ctrl onClick={toggleFullscreen}>
+                  {isFullscreen ? "TAM EKRANDAN ÇIK" : "TAM EKRAN"}
+                </Ctrl>
+                <Ctrl onClick={() => void navigate({ to: "/" })}>ÇIKIŞ</Ctrl>
+              </>
+            )}
             {data.status === "FINISHED" && (
               <Ctrl onClick={() => act("restart")} primary>
                 BAŞLAT
