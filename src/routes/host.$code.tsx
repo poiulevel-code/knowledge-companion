@@ -39,7 +39,23 @@ function HostScreen() {
   const control = useServerFn(controlRoom);
   const [pulse, setPulse] = useState<1 | 2 | null>(null);
   const [lobbyOpen, setLobbyOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const arenaRef = useRef<HTMLDivElement>(null);
   const prevPos = useRef(0);
+
+  useEffect(() => {
+    const onFs = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener("fullscreenchange", onFs);
+    return () => document.removeEventListener("fullscreenchange", onFs);
+  }, []);
+
+  const toggleFullscreen = () => {
+    if (document.fullscreenElement) {
+      void document.exitFullscreen();
+    } else if (arenaRef.current) {
+      void arenaRef.current.requestFullscreen();
+    }
+  };
 
   const q = data?.question ?? null;
   const status = data?.status;
@@ -153,8 +169,30 @@ function HostScreen() {
             </section>
           ) : (
             <section>
-              <div className="-mx-5 sm:-mx-10">
+              <div
+                ref={arenaRef}
+                className={`-mx-5 sm:-mx-10 ${isFullscreen ? "relative flex h-full flex-col justify-center bg-panel" : ""}`}
+              >
                 <TugOfWarArena ropePosition={data.ropePosition} pulse={pulse} />
+                {isFullscreen && (
+                  <div className="absolute right-4 top-4 flex gap-2">
+                    <button
+                      onClick={toggleFullscreen}
+                      className="rounded-lg border-2 border-border bg-panel px-3.5 py-1.5 text-xs font-bold text-foreground hover:bg-muted"
+                    >
+                      TAM EKRANDAN ÇIK
+                    </button>
+                    <button
+                      onClick={() => {
+                        void document.exitFullscreen();
+                        void navigate({ to: "/" });
+                      }}
+                      className="rounded-lg bg-foreground px-3.5 py-1.5 text-xs font-bold text-background"
+                    >
+                      ÇIKIŞ
+                    </button>
+                  </div>
+                )}
               </div>
               <div className="mt-6 text-center">
                 {data.status === "PAUSED" && (
@@ -181,6 +219,14 @@ function HostScreen() {
               <Ctrl onClick={() => act("resume")} primary>
                 DEVAM ET
               </Ctrl>
+            )}
+            {(data.status === "PLAYING" || data.status === "PAUSED") && (
+              <>
+                <Ctrl onClick={toggleFullscreen}>
+                  {isFullscreen ? "TAM EKRANDAN ÇIK" : "TAM EKRAN"}
+                </Ctrl>
+                <Ctrl onClick={() => void navigate({ to: "/" })}>ÇIKIŞ</Ctrl>
+              </>
             )}
             {data.status === "FINISHED" && (
               <Ctrl onClick={() => act("restart")} primary>
