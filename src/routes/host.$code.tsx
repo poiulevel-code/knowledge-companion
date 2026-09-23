@@ -174,6 +174,25 @@ function HostScreen() {
                 className={`-mx-5 sm:-mx-10 ${isFullscreen ? "flex h-full flex-col justify-center bg-panel" : ""}`}
               >
                 <TugOfWarArena ropePosition={data.ropePosition} pulse={pulse} />
+                {isFullscreen && (
+                  <div className="absolute right-4 top-4 flex gap-2">
+                    <button
+                      onClick={toggleFullscreen}
+                      className="rounded-lg border-2 border-border bg-panel px-3.5 py-1.5 text-xs font-bold text-foreground hover:bg-muted"
+                    >
+                      TAM EKRANDAN ÇIK
+                    </button>
+                    <button
+                      onClick={() => {
+                        void document.exitFullscreen();
+                        void navigate({ to: "/" });
+                      }}
+                      className="rounded-lg bg-foreground px-3.5 py-1.5 text-xs font-bold text-background"
+                    >
+                      ÇIKIŞ
+                    </button>
+                  </div>
+                )}
               </div>
               <div className="mt-6 text-center">
                 {data.status === "PAUSED" && (
