@@ -141,7 +141,7 @@ function clean(data: QuestionInput): QuestionInput {
     option_c: String(data.option_c || "").trim().slice(0, 200),
     option_d: String(data.option_d || "").trim().slice(0, 200),
     correct_answer: String(data.correct_answer || "A").toUpperCase().slice(0, 1),
-    category: String(data.category || "Genel Kültür").trim().slice(0, 60),
+    category: data.category ? String(data.category).trim().slice(0, 60) : undefined,
   };
 }
 
@@ -172,7 +172,9 @@ export const addQuestion = createServerFn({ method: "POST" })
         .maybeSingle();
       targetSetId = firstSet?.id ?? null;
     }
-    const { error } = await supabase.from("questions").insert({ ...fields, set_id: targetSetId });
+    const { error } = await supabase
+      .from("questions")
+      .insert({ ...fields, category: fields.category ?? "Genel Kültür", set_id: targetSetId });
     if (error) throw new Error("Soru kaydedilemedi");
     return { ok: true };
   });
