@@ -69,9 +69,6 @@ function SetsPage() {
             <h1 className="mt-2 text-4xl font-extrabold tracking-tight text-foreground">
               HANGİ SETİ SUNACAKSIN?
             </h1>
-            <p className="mt-2 text-sm font-semibold text-muted-foreground">
-              Her set ayrıdır. İstediğin kadar set oluştur, her birine istediğin kadar soru ekle.
-            </p>
           </div>
           <Link
             to="/"

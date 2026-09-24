@@ -29,15 +29,9 @@ function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-background px-5 py-12">
       <div className="w-full max-w-2xl rounded-[var(--radius)] bg-panel p-8 text-center shadow-[var(--shadow-panel)] sm:p-14">
-        <p className="text-xs font-semibold tracking-[0.35em] text-muted-foreground">
-          SINIF YARIŞMASI
-        </p>
-        <h1 className="mt-4 text-5xl font-extrabold tracking-tight text-foreground sm:text-6xl">
+        <h1 className="text-5xl font-extrabold tracking-tight text-foreground sm:text-6xl">
           HALAT YARIŞI
         </h1>
-        <p className="mt-3 text-sm font-semibold tracking-[0.18em] text-muted-foreground sm:text-base">
-          2 TAKIM • TÜRKÇE BİLGİ YARIŞMASI
-        </p>
 
         <Link
           to="/sorular"

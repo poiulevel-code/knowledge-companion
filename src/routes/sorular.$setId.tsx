@@ -108,9 +108,6 @@ function QuestionsPage() {
             <h1 className="mt-2 text-4xl font-extrabold tracking-tight text-foreground">
               {setInfo.data?.title ?? "..."}
             </h1>
-            <p className="mt-2 text-sm font-semibold text-muted-foreground">
-              Bu sette {total} soru var. Sunduğunda hepsi sırayla sorulur.
-            </p>
           </div>
           <div className="flex gap-2">
             <Link
