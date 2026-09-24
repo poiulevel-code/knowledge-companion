@@ -188,7 +188,8 @@ export const updateQuestion = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { id, ...fields } = data;
     validate(fields);
-    const update = Object.fromEntries(Object.entries(fields).filter(([, v]) => v !== undefined));
+    const { category, ...rest } = fields;
+    const update = category === undefined ? rest : { ...rest, category };
     const supabase = await db();
     const { error } = await supabase.from("questions").update(update).eq("id", id);
     if (error) throw new Error("Soru güncellenemedi");
