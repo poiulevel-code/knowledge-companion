@@ -130,7 +130,7 @@ type QuestionInput = {
   option_c: string;
   option_d: string;
   correct_answer: string;
-  category: string;
+  category?: string;
 };
 
 function clean(data: QuestionInput): QuestionInput {
