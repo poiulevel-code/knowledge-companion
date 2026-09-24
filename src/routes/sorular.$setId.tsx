@@ -30,6 +30,13 @@ export const Route = createFileRoute("/sorular/$setId")({
 });
 
 const LETTERS = ["A", "B", "C", "D"] as const;
+const SHAPES: Record<(typeof LETTERS)[number], string> = { A: "▲", B: "◆", C: "●", D: "■" };
+const OPT_BG: Record<(typeof LETTERS)[number], string> = {
+  A: "bg-kh-red",
+  B: "bg-kh-blue",
+  C: "bg-kh-yellow",
+  D: "bg-kh-green",
+};
 
 const empty = {
   question: "",
@@ -102,116 +109,134 @@ function QuestionsPage() {
   const total = list.data?.length ?? 0;
 
   return (
-    <main className="min-h-screen bg-background px-4 py-8 sm:px-8">
+    <main className="min-h-screen bg-kh-bg px-4 py-8 sm:px-8">
       <div className="mx-auto w-full max-w-5xl">
         <header className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold tracking-[0.35em] text-muted-foreground">
-              SORU SETİ
+            <p className="text-xs font-bold uppercase tracking-[0.35em] text-white/60">
+              Soru Seti
             </p>
-            <h1 className="mt-2 text-4xl font-extrabold tracking-tight text-foreground">
+            <h1 className="mt-2 text-4xl font-extrabold tracking-tight text-white">
               {setInfo.data?.title ?? "..."}
             </h1>
+            <p className="mt-2 text-sm font-semibold text-white/60">{total} soru</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <Link
               to="/sorular"
-              className="rounded-xl border-2 border-border bg-panel px-4 py-3 text-sm font-bold text-foreground hover:bg-muted"
+              className="rounded-full bg-white/10 px-5 py-3 text-sm font-extrabold text-white ring-2 ring-white/30 transition hover:bg-white/20"
             >
               SETLERE DÖN
             </Link>
             <button
               onClick={startContest}
               disabled={starting || total === 0}
-              className="rounded-xl bg-foreground px-5 py-3 text-sm font-bold text-background disabled:opacity-40"
+              className="rounded-full bg-kh-green px-6 py-3 text-sm font-extrabold text-white shadow-[0_4px_0_oklch(0.42_0.14_145)] transition active:translate-y-0.5 active:shadow-none disabled:opacity-40"
             >
               {starting ? "HAZIRLANIYOR..." : "BU SETİ SUN"}
             </button>
           </div>
         </header>
 
-        {error && <p className="mt-4 text-sm font-semibold text-destructive">{error}</p>}
+        {error && (
+          <p className="mt-4 rounded-2xl bg-white/15 px-4 py-3 text-sm font-extrabold text-white">
+            {error}
+          </p>
+        )}
 
-        <section className="mt-6 rounded-[var(--radius)] bg-panel p-6 shadow-[var(--shadow-panel)]">
-          <h2 className="text-lg font-extrabold text-foreground">
-            {editingId ? "SORUYU DÜZENLE" : "YENİ SORU EKLE"}
-          </h2>
-          <div className="mt-4 grid gap-3">
-            <Field label="Soru metni">
-              <textarea
-                value={form.question}
-                onChange={(e) => set("question", e.target.value)}
-                rows={2}
-                placeholder="Güneş sistemimizde kaç gezegen bulunur?"
-                className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 text-base font-semibold text-foreground outline-none focus:border-team1"
-              />
-            </Field>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {LETTERS.map((l) => (
-                <Field key={l} label={`${l} seçeneği`}>
+        <section className="mt-8 rounded-3xl bg-white p-6 shadow-[0_16px_50px_-16px_oklch(0.1_0.1_296_/_0.5)] sm:p-8">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-xl font-extrabold uppercase tracking-wide text-foreground">
+              {editingId ? "Soruyu Düzenle" : "Yeni Soru Ekle"}
+            </h2>
+            {editingId && (
+              <button
+                onClick={() => {
+                  setEditingId(null);
+                  setForm({ ...empty });
+                }}
+                className="text-xs font-extrabold uppercase tracking-wider text-muted-foreground hover:text-foreground"
+              >
+                Vazgeç
+              </button>
+            )}
+          </div>
+
+          <textarea
+            value={form.question}
+            onChange={(e) => set("question", e.target.value)}
+            rows={3}
+            placeholder="Sorunuzu buraya yazın"
+            className="mt-5 w-full resize-none rounded-2xl border-b-4 border-border bg-muted/50 px-5 py-4 text-lg font-extrabold text-foreground outline-none placeholder:text-muted-foreground/60 focus:border-foreground/70"
+          />
+
+          <p className="mt-6 text-xs font-extrabold uppercase tracking-[0.2em] text-muted-foreground">
+            Cevap seçenekleri — doğru olanın yanındaki ✓ işaretine dokun
+          </p>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            {LETTERS.map((l) => {
+              const correct = form.correct_answer === l;
+              return (
+                <div
+                  key={l}
+                  className={`flex items-center gap-3 rounded-2xl px-4 py-3 shadow-[0_4px_0_oklch(0.1_0.05_296_/_0.25)] ${OPT_BG[l]}`}
+                >
+                  <span className="w-7 shrink-0 text-center text-2xl leading-none text-white drop-shadow">
+                    {SHAPES[l]}
+                  </span>
                   <input
                     value={form[`option_${l.toLowerCase()}` as "option_a"]}
                     onChange={(e) =>
                       set(`option_${l.toLowerCase()}` as keyof typeof empty, e.target.value)
                     }
-                    className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 text-base font-semibold text-foreground outline-none focus:border-team1"
+                    placeholder={`${l} seçeneği`}
+                    className="w-full bg-transparent text-base font-extrabold text-white outline-none placeholder:text-white/70"
                   />
-                </Field>
-              ))}
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Field label="Doğru cevap">
-                <div className="flex gap-2">
-                  {LETTERS.map((l) => (
-                    <button
-                      key={l}
-                      onClick={() => set("correct_answer", l)}
-                      className={`h-12 flex-1 rounded-xl text-base font-extrabold transition-colors ${
-                        form.correct_answer === l
-                          ? "bg-foreground text-background"
-                          : "border-2 border-border bg-background text-foreground hover:bg-muted"
-                      }`}
-                    >
-                      {l}
-                    </button>
-                  ))}
+                  <button
+                    type="button"
+                    aria-label={`${l} doğru cevap`}
+                    onClick={() => set("correct_answer", l)}
+                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-[3px] text-base font-extrabold transition ${
+                      correct
+                        ? "border-white bg-white text-foreground"
+                        : "border-white/60 text-transparent hover:border-white"
+                    }`}
+                  >
+                    ✓
+                  </button>
                 </div>
-              </Field>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <button
-                onClick={save}
-                disabled={saving}
-                className="rounded-xl bg-team1 px-6 py-3 text-sm font-bold text-panel disabled:opacity-40"
-              >
-                {saving ? "KAYDEDİLİYOR..." : editingId ? "GÜNCELLE" : "SORUYU EKLE"}
-              </button>
-              {editingId && (
-                <button
-                  onClick={() => {
-                    setEditingId(null);
-                    setForm({ ...empty });
-                  }}
-                  className="rounded-xl border-2 border-border px-6 py-3 text-sm font-bold text-foreground hover:bg-muted"
-                >
-                  VAZGEÇ
-                </button>
-              )}
-            </div>
+              );
+            })}
           </div>
+
+          <button
+            onClick={save}
+            disabled={saving}
+            className="mt-6 w-full rounded-2xl bg-foreground px-6 py-4 text-base font-extrabold uppercase tracking-wider text-background shadow-[0_5px_0_oklch(0.1_0.02_264)] transition active:translate-y-0.5 active:shadow-none disabled:opacity-40 sm:w-auto sm:px-10"
+          >
+            {saving ? "KAYDEDİLİYOR..." : editingId ? "GÜNCELLE" : "SORUYU EKLE"}
+          </button>
         </section>
 
-        <section className="mt-6 space-y-3">
+        <section className="mt-8 space-y-4 pb-12">
           {list.isLoading && (
-            <p className="text-sm font-semibold text-muted-foreground">Sorular yükleniyor...</p>
+            <p className="text-sm font-extrabold text-white/70">Sorular yükleniyor...</p>
           )}
-          {(list.data ?? []).map((q) => (
+          {!list.isLoading && total === 0 && (
+            <p className="rounded-3xl bg-white/10 px-6 py-8 text-center text-sm font-extrabold text-white/70">
+              Henüz soru yok — yukarıdan ilk sorunuzu ekle!
+            </p>
+          )}
+          {(list.data ?? []).map((q, i) => (
             <article
               key={q.id}
-              className="rounded-[var(--radius)] bg-panel p-5 shadow-[var(--shadow-panel)]"
+              className="rounded-3xl bg-white p-5 shadow-[0_10px_30px_-14px_oklch(0.1_0.1_296_/_0.5)]"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
+                <div className="flex items-start gap-3">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-extrabold text-muted-foreground">
+                    {i + 1}
+                  </span>
                   <h3 className="text-lg font-extrabold text-foreground">{q.question}</h3>
                 </div>
                 <div className="flex gap-2">
@@ -228,7 +253,7 @@ function QuestionsPage() {
                       });
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
-                    className="rounded-xl border-2 border-border px-3 py-2 text-xs font-bold text-foreground hover:bg-muted"
+                    className="rounded-full bg-muted px-4 py-2 text-xs font-extrabold text-foreground hover:bg-border"
                   >
                     DÜZENLE
                   </button>
@@ -242,7 +267,7 @@ function QuestionsPage() {
                         setError(e instanceof Error ? e.message : "Silinemedi");
                       }
                     }}
-                    className="rounded-xl border-2 border-destructive px-3 py-2 text-xs font-bold text-destructive"
+                    className="rounded-full border-2 border-kh-red/40 px-4 py-2 text-xs font-extrabold text-kh-red hover:bg-kh-red/10"
                   >
                     SİL
                   </button>
@@ -255,14 +280,13 @@ function QuestionsPage() {
                   return (
                     <p
                       key={l}
-                      className={`rounded-xl border-2 px-3 py-2 text-sm font-semibold ${
-                        correct
-                          ? "border-foreground bg-muted text-foreground"
-                          : "border-border text-muted-foreground"
+                      className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-extrabold text-white ${OPT_BG[l]} ${
+                        correct ? "ring-4 ring-foreground/70" : "opacity-80"
                       }`}
                     >
-                      {l}. {value}
-                      {correct ? " ✓" : ""}
+                      <span className="text-base leading-none">{SHAPES[l]}</span>
+                      <span className="truncate">{value}</span>
+                      {correct && <span className="ml-auto shrink-0">✓</span>}
                     </p>
                   );
                 })}
@@ -272,16 +296,5 @@ function QuestionsPage() {
         </section>
       </div>
     </main>
-  );
-}
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <label className="block">
-      <span className="text-xs font-bold tracking-[0.18em] text-muted-foreground">
-        {label.toUpperCase()}
-      </span>
-      <div className="mt-1.5">{children}</div>
-    </label>
   );
 }
