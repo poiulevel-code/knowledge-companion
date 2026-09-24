@@ -124,9 +124,10 @@ function QuestionsPage() {
           <div className="flex gap-3">
             <Link
               to="/sorular"
-              className="rounded-full bg-white/10 px-5 py-3 text-sm font-extrabold text-white ring-2 ring-white/30 transition hover:bg-white/20"
+              aria-label="Geri dön"
+              className="flex items-center gap-2 rounded-full bg-white/10 px-5 py-3 text-sm font-extrabold text-white ring-2 ring-white/30 transition hover:bg-white/20"
             >
-              SETLERE DÖN
+              <span className="text-lg leading-none">←</span> GERİ
             </Link>
             <button
               onClick={startContest}
