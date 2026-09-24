@@ -68,8 +68,13 @@ function QuestionsPage() {
   const set = (k: keyof typeof empty, v: string | number) => setForm((f) => ({ ...f, [k]: v }));
 
   const save = async () => {
-    setSaving(true);
     setError(null);
+    const f = form as Record<string, unknown>;
+    const str = (k: string) => String(f[k] ?? "").trim();
+    if (!str("question")) return setError("Soru metni gerekli");
+    if (!str("option_a") || !str("option_b") || !str("option_c") || !str("option_d"))
+      return setError("Dört seçeneğin tamamını doldurun");
+    setSaving(true);
     try {
       if (editingId) await edit({ data: { ...form, id: editingId } });
       else await add({ data: { ...form, setId } });
