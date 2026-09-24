@@ -38,7 +38,6 @@ const empty = {
   option_c: "",
   option_d: "",
   correct_answer: "A",
-  category: "Genel Kültür",
 };
 
 function QuestionsPage() {
@@ -173,13 +172,6 @@ function QuestionsPage() {
                   ))}
                 </div>
               </Field>
-              <Field label="Kategori">
-                <input
-                  value={form.category}
-                  onChange={(e) => set("category", e.target.value)}
-                  className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 text-base font-semibold text-foreground outline-none focus:border-team1"
-                />
-              </Field>
             </div>
             <div className="flex flex-wrap gap-2">
               <button
@@ -215,10 +207,7 @@ function QuestionsPage() {
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <p className="text-xs font-semibold tracking-[0.25em] text-muted-foreground">
-                    {q.category.toUpperCase()}
-                  </p>
-                  <h3 className="mt-1 text-lg font-extrabold text-foreground">{q.question}</h3>
+                  <h3 className="text-lg font-extrabold text-foreground">{q.question}</h3>
                 </div>
                 <div className="flex gap-2">
                   <button
@@ -231,7 +220,6 @@ function QuestionsPage() {
                         option_c: q.option_c,
                         option_d: q.option_d,
                         correct_answer: q.correct_answer.toUpperCase(),
-                        category: q.category,
                       });
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
